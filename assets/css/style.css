@@ -54,10 +54,10 @@ button { font-family: inherit; }
 }
 .brand-mark span { font-family: var(--font-head); font-weight: 700; color: #2b1f05; font-size: 17px; letter-spacing: 1px; }
 .brand-text { min-width: 0; flex: 1; }
-.brand-name { font-family: var(--font-head); font-weight: 700; font-size: 17px; letter-spacing: 1.5px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.brand-name small { display: block; font-family: var(--font-body); font-weight: 600; font-size: 9.5px; letter-spacing: 2.5px; color: var(--muted); -webkit-text-fill-color: var(--muted); margin-bottom: 1px; }
-.brand-slogan { font-size: 11.5px; color: var(--muted); font-style: italic; height: 16px; overflow: hidden; position: relative; }
-.brand-slogan span { position: absolute; left: 0; top: 0; right: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .6s, transform .6s; opacity: 0; transform: translateY(6px); }
+.brand-name { font-family: var(--font-head); font-weight: 700; font-size: 17px; letter-spacing: 1.2px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-top: 1px; }
+.brand-name small { display: block; font-family: var(--font-body); font-weight: 600; font-size: 9.5px; letter-spacing: 2px; line-height: 1.5; color: var(--muted); -webkit-text-fill-color: var(--muted); }
+.brand-slogan { font-size: 11.5px; line-height: 18px; color: var(--muted); font-style: italic; height: 18px; overflow: hidden; position: relative; }
+.brand-slogan span { position: absolute; left: 0; top: 0; right: 0; line-height: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: opacity .6s, transform .6s; opacity: 0; transform: translateY(6px); }
 .brand-slogan span.on { opacity: 1; transform: none; }
 .brand-addr { font-size: 11px; color: var(--gold-text); font-weight: 500; display: flex; align-items: center; gap: 4px; margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .brand-addr svg { width: 11px; height: 11px; flex: none; }
@@ -70,7 +70,8 @@ button { font-family: inherit; }
 @media (min-width: 720px) {
   .brand-name { font-size: 22px; letter-spacing: 2.5px; }
   .brand-name small { font-size: 10.5px; letter-spacing: 3px; }
-  .brand-slogan { font-size: 13px; height: 18px; }
+  .brand-slogan { font-size: 13px; height: 20px; line-height: 20px; }
+  .brand-slogan span { line-height: 20px; }
   .brand-addr { font-size: 12.5px; }
   .brand-mark { width: 54px; height: 54px; flex-basis: 54px; }
   .brand-mark span { font-size: 20px; }
@@ -84,7 +85,7 @@ button { font-family: inherit; }
 .slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(40,30,5,0) 45%, rgba(40,30,5,0.45) 72%, rgba(40,30,5,0.82) 100%); }
 .slide-caption { position: absolute; left: 18px; right: 18px; bottom: 34px; z-index: 2; color: #fff; }
 .slide-sub { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-2); margin-bottom: 4px; }
-.slide-title { font-family: var(--font-head); font-size: 30px; font-weight: 700; line-height: 1.1; text-shadow: 0 2px 12px rgba(0,0,0,0.45); }
+.slide-title { font-family: var(--font-head); font-size: 30px; font-weight: 700; line-height: 1.25; text-shadow: 0 2px 12px rgba(0,0,0,0.45); }
 .slide-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 12.5px; color: #2b1f05; padding: 7px 13px; border-radius: 999px; background: linear-gradient(135deg, #f7e7a8, var(--gold)); font-weight: 600; box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
 .slide-cta svg { width: 14px; height: 14px; }
 .hot-badge {
@@ -123,7 +124,7 @@ button { font-family: inherit; }
 /* ===== Sections ===== */
 .section { padding-top: 22px; padding-bottom: 22px; }
 .section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
-.section-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; margin: 0; line-height: 1.15; color: var(--text); }
+.section-title { font-family: var(--font-head); font-size: 22px; font-weight: 700; margin: 0; line-height: 1.3; color: var(--text); }
 .section-title small { display: block; font-family: var(--font-body); font-size: 11.5px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-text); font-weight: 600; margin-bottom: 4px; }
 .section-note { font-size: 12px; color: var(--muted); text-align: right; }
 
@@ -173,7 +174,12 @@ button { font-family: inherit; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(31,157,85,.5); } 100% { box-shadow: 0 0 0 8px rgba(31,157,85,0); } }
 .price-wrap { overflow-x: auto; }
 table.prices { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-table.prices th, table.prices td { padding: 10px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid rgba(160,128,26,0.10); }
+table.prices th, table.prices td { padding: 10px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid rgba(160,128,26,0.12); border-left: 1px solid rgba(160,128,26,0.14); }
+table.prices th:first-child, table.prices td:first-child { border-left: 0; }
+/* vạch đậm ngăn nhóm Hôm nay | Hôm qua */
+table.prices td:nth-child(4), table.prices thead tr:nth-child(2) th:nth-child(3), table.prices thead tr.group th:nth-child(3) { border-left: 2px solid var(--gold); }
+table.prices thead tr.group th:nth-child(2) { border-left: 1px solid rgba(160,128,26,0.14); }
+table.prices td:first-child { border-right: 1px solid rgba(160,128,26,0.14); }
 table.prices th:first-child, table.prices td:first-child { text-align: left; padding-left: 14px; position: sticky; left: 0; background: #fff; }
 table.prices thead th { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; background: var(--bg-3); }
 table.prices thead th:first-child { background: var(--bg-3); }
