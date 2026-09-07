@@ -174,12 +174,12 @@ button { font-family: inherit; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(31,157,85,.5); } 100% { box-shadow: 0 0 0 8px rgba(31,157,85,0); } }
 .price-wrap { overflow-x: auto; }
 table.prices { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-table.prices th, table.prices td { padding: 10px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid rgba(160,128,26,0.12); border-left: 1px solid rgba(160,128,26,0.14); }
+table.prices th, table.prices td { padding: 10px 8px; text-align: right; white-space: nowrap; border-bottom: 1px solid rgba(160,128,26,0.18); border-left: 1px solid rgba(160,128,26,0.32); }
 table.prices th:first-child, table.prices td:first-child { border-left: 0; }
 /* vạch đậm ngăn nhóm Hôm nay | Hôm qua */
 table.prices td:nth-child(4), table.prices thead tr:nth-child(2) th:nth-child(3), table.prices thead tr.group th:nth-child(3) { border-left: 2px solid var(--gold); }
-table.prices thead tr.group th:nth-child(2) { border-left: 1px solid rgba(160,128,26,0.14); }
-table.prices td:first-child { border-right: 1px solid rgba(160,128,26,0.14); }
+table.prices thead tr.group th:nth-child(2) { border-left: 1px solid rgba(160,128,26,0.32); }
+table.prices td:first-child { border-right: 1px solid rgba(160,128,26,0.32); }
 table.prices th:first-child, table.prices td:first-child { text-align: left; padding-left: 14px; position: sticky; left: 0; background: #fff; }
 table.prices thead th { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .6px; background: var(--bg-3); }
 table.prices thead th:first-child { background: var(--bg-3); }
