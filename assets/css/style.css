@@ -227,6 +227,9 @@ table.prices tr.stale td:not(:first-child) { color: #b3a98d; }
 .footer-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 13.5px; }
 .footer-list li { display: flex; align-items: flex-start; gap: 10px; }
 .footer-list svg { width: 16px; height: 16px; color: var(--gold-text); flex: none; margin-top: 2px; }
+.footer-cat { display: flex; align-items: center; gap: 10px; }
+.footer-cat .ic { width: 26px; height: 26px; border-radius: 8px; background: #fff; border: 1px solid var(--line-soft); display: grid; place-items: center; flex: none; }
+.footer-cat .ic img { width: 18px; height: 18px; object-fit: contain; }
 .footer-list a:hover { color: var(--gold-3); }
 .footer-cta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
 .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 42px; padding: 0 16px; border-radius: 12px; font-weight: 600; font-size: 13.5px; border: 1px solid transparent; cursor: pointer; transition: .2s; }

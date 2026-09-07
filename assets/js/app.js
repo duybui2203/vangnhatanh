@@ -90,7 +90,7 @@
       </div>`).join('');
     $('#catChips').innerHTML = visible.map((c) => `
       <button class="cat-chip" data-cat="${esc(c.id)}"><span class="ic"><img src="${imgUrl(c.icon)}" alt="" /></span><span class="nm">${esc(c.name)}</span></button>`).join('');
-    $('#footerCats').innerHTML = visible.map((c) => `<li><a href="#products" data-cat="${esc(c.id)}">${ICONS.gem}${esc(c.name)}</a></li>`).join('');
+    $('#footerCats').innerHTML = visible.map((c) => `<li><a href="#products" data-cat="${esc(c.id)}" class="footer-cat"><span class="ic"><img src="${imgUrl(c.icon)}" alt="" /></span>${esc(c.name)}</a></li>`).join('');
 
     if (state.swiper) state.swiper.destroy(true, true);
     state.swiper = new Swiper('#heroSwiper', {
