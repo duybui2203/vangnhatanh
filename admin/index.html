@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quản trị – Vàng Nhật Anh</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+  <link rel="stylesheet" href="../assets/css/admin.css" />
+</head>
+<body>
+  <!-- Cổng đăng nhập -->
+  <div class="gate" id="gate">
+    <div class="modal-box">
+      <h3 class="modal-title gold-text">Đăng nhập quản trị</h3>
+      <p class="modal-sub">Vàng Nhật Anh</p>
+      <form id="gateForm" autocomplete="off">
+        <div class="field"><label>Tài khoản</label><input id="gateUser" type="text" required autocapitalize="off" /></div>
+        <div class="field"><label>Mật khẩu</label><input id="gatePass" type="password" required /></div>
+        <div class="form-error" id="gateError"></div>
+        <button class="btn btn-gold btn-block" type="submit">Đăng nhập</button>
+        <p class="modal-sub" style="margin:12px 0 0;text-align:center"><a href="../" style="color:var(--gold)">← Về trang chủ</a></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="app" hidden>
+    <header class="admin-top">
+      <div class="container">
+        <div class="brand-mark" style="width:36px;height:36px;flex-basis:36px"><span style="font-size:13px">NA</span></div>
+        <div class="ttl gold-text">Quản trị Vàng Nhật Anh<small id="repoInfo"></small></div>
+        <a class="btn btn-ghost btn-sm" href="../" target="_blank" rel="noopener">Xem web</a>
+        <button class="btn btn-ghost btn-sm" id="logoutBtn">Thoát</button>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-tab="cats">Danh mục</button>
+        <button class="tab" data-tab="prods">Sản phẩm</button>
+        <button class="tab" data-tab="price">Giá Vàng Nhật Anh</button>
+        <button class="tab" data-tab="info">Thông tin chung</button>
+        <button class="tab" data-tab="token">Kết nối GitHub</button>
+      </div>
+
+      <!-- ===== Kết nối GitHub ===== -->
+      <section class="panel" id="panel-token">
+        <div class="box">
+          <h3>Kết nối GitHub</h3>
+          <p class="help">Trang admin lưu dữ liệu trực tiếp vào repo <b id="repoName"></b>. Cần một <b>Personal Access Token</b> có quyền ghi (Contents: Read and write) cho repo này.
+            Tạo tại <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> → Repository access: chọn đúng repo → Permissions → Contents: <b>Read and write</b>.
+            Token chỉ lưu trong trình duyệt này.</p>
+          <div class="field"><label>GitHub token</label><input id="tokenInput" type="password" placeholder="github_pat_…" autocomplete="off" /></div>
+          <div class="row">
+            <button class="btn btn-gold btn-sm fix" id="tokenSave">Lưu &amp; kiểm tra</button>
+            <button class="btn btn-ghost btn-sm fix" id="tokenClear">Xóa token</button>
+          </div>
+          <div id="tokenStatus"></div>
+        </div>
+      </section>
+
+      <!-- ===== Danh mục ===== -->
+      <section class="panel active" id="panel-cats">
+        <div class="box">
+          <div class="row" style="margin-bottom:10px"><h3 style="margin:0">Danh mục sản phẩm</h3><button class="btn btn-gold btn-sm fix" id="addCat">+ Thêm danh mục</button></div>
+          <p class="help">Mỗi danh mục là một trang trong pageview và một ô ở dải danh mục bên dưới. Dùng mũi tên để đổi thứ tự.</p>
+          <div class="list" id="catList"></div>
+        </div>
+      </section>
+
+      <!-- ===== Sản phẩm ===== -->
+      <section class="panel" id="panel-prods">
+        <div class="box">
+          <div class="row" style="margin-bottom:10px">
+            <div class="field" style="margin:0"><select id="prodCat"></select></div>
+            <button class="btn btn-gold btn-sm fix" id="addProd">+ Thêm sản phẩm</button>
+          </div>
+          <p class="help">Để trống giá bán thì web sẽ hiển thị chữ <b>“Liên hệ”</b>.</p>
+          <div class="list" id="prodList"></div>
+        </div>
+      </section>
+
+      <!-- ===== Giá vàng ===== -->
+      <section class="panel" id="panel-price">
+        <div class="box">
+          <h3>Giá Vàng Nhật Anh (nghìn đồng/lượng)</h3>
+          <p class="help">Ví dụ 147.000 nghìn đồng/lượng = 147.000.000 ₫/lượng. Khi lưu sang ngày mới, giá cũ tự chuyển sang cột “Hôm qua”. Các dòng còn lại trong bảng (SJC, DOJI, BTMC…) được bot tự cập nhật mỗi 15 phút.</p>
+          <div class="row">
+            <div class="field"><label>Giá mua hôm nay</label><input id="ownBuy" type="number" inputmode="numeric" /></div>
+            <div class="field"><label>Giá bán hôm nay</label><input id="ownSell" type="number" inputmode="numeric" /></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>Giá mua hôm qua</label><input id="ownPrevBuy" type="number" inputmode="numeric" /></div>
+            <div class="field"><label>Giá bán hôm qua</label><input id="ownPrevSell" type="number" inputmode="numeric" /></div>
+          </div>
+          <div class="field"><label>Tên hiển thị</label><input id="ownName" type="text" /></div>
+          <p class="help" id="ownUpdated"></p>
+          <button class="btn btn-gold" id="savePrice">Lưu giá</button>
+        </div>
+      </section>
+
+      <!-- ===== Thông tin chung ===== -->
+      <section class="panel" id="panel-info">
+        <div class="box">
+          <h3>Thông tin công ty</h3>
+          <div class="field"><label>Tên công ty (header &amp; footer)</label><input id="sCompany" type="text" /></div>
+          <div class="field"><label>Tên thương hiệu ngắn</label><input id="sBrand" type="text" /></div>
+          <div class="field"><label>Slogan (mỗi dòng một câu)</label><textarea id="sSlogans"></textarea></div>
+          <div class="field"><label>Địa chỉ</label><input id="sAddress" type="text" /></div>
+          <div class="field"><label>Link Google Maps</label><input id="sMap" type="text" /></div>
+          <div class="row">
+            <div class="field"><label>Số điện thoại</label><input id="sPhone" type="tel" /></div>
+            <div class="field"><label>Số Zalo</label><input id="sZalo" type="tel" /></div>
+          </div>
+          <div class="field"><label>Giờ mở cửa</label><input id="sHours" type="text" /></div>
+        </div>
+        <div class="box">
+          <div class="row" style="margin-bottom:8px"><h3 style="margin:0">Cam kết (mục Uy tín)</h3><button class="btn btn-ghost btn-sm fix" id="addCommit">+ Thêm</button></div>
+          <div id="commitRows"></div>
+        </div>
+        <button class="btn btn-gold" id="saveInfo">Lưu thông tin</button>
+      </section>
+    </div>
+  </div>
+
+  <!-- Modal danh mục -->
+  <div class="modal" id="catModal">
+    <div class="modal-box wide">
+      <button class="modal-close" data-close>×</button>
+      <h3 class="modal-title gold-text" id="catModalTitle">Thêm danh mục</h3>
+      <form id="catForm">
+        <div class="field"><label>Tên danh mục *</label><input id="cName" type="text" required placeholder="VD: Ngọc Phong Thủy" /></div>
+        <div class="field"><label>Tiêu đề phụ (hiện trên pageview)</label><input id="cSub" type="text" placeholder="VD: Sản phẩm bán chạy" /></div>
+        <div class="row">
+          <div class="field"><label>Nhãn góc phải (để trống nếu không có)</label><input id="cBadge" type="text" placeholder="VD: Bán chạy / Mới" /></div>
+          <div class="field fix" style="padding-top:22px"><label class="check"><input id="cVisible" type="checkbox" checked /> Hiển thị</label></div>
+        </div>
+        <div class="row" style="align-items:flex-start">
+          <div class="field"><label>Ảnh lớn (pageview) – tỉ lệ 4:3 hoặc 16:9</label><input id="cBanner" type="file" accept="image/*" /><img class="preview" id="cBannerPrev" alt="" /></div>
+          <div class="field fix" style="width:120px"><label>Icon (dải danh mục)</label><input id="cIcon" type="file" accept="image/*" style="width:120px" /><img class="preview sq" id="cIconPrev" alt="" /></div>
+        </div>
+        <div class="form-error" id="catError"></div>
+        <button class="btn btn-gold btn-block" type="submit">Lưu danh mục</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal sản phẩm -->
+  <div class="modal" id="prodModal">
+    <div class="modal-box wide">
+      <button class="modal-close" data-close>×</button>
+      <h3 class="modal-title gold-text" id="prodModalTitle">Thêm sản phẩm</h3>
+      <form id="prodForm">
+        <div class="field"><label>Tên sản phẩm *</label><input id="pName" type="text" required /></div>
+        <div class="row">
+          <div class="field"><label>Giá bán (₫) – để trống = “Liên hệ”</label><input id="pPrice" type="number" inputmode="numeric" placeholder="VD: 15200000" /></div>
+          <div class="field"><label>Nhãn</label><input id="pBadge" type="text" placeholder="Bán chạy / Mới" /></div>
+        </div>
+        <div class="row">
+          <div class="field"><label>Loại vàng</label><input id="pGold" type="text" placeholder="VD: Vàng 24K (9999)" /></div>
+          <div class="field"><label>Trọng lượng</label><input id="pWeight" type="text" placeholder="VD: 1 chỉ" /></div>
+        </div>
+        <div class="field"><label>Mô tả ngắn</label><textarea id="pDesc"></textarea></div>
+        <div class="row" style="align-items:flex-start">
+          <div class="field"><label>Ảnh sản phẩm (vuông)</label><input id="pImage" type="file" accept="image/*" /><img class="preview sq" id="pImagePrev" alt="" style="width:140px" /></div>
+          <div class="field fix" style="padding-top:22px"><label class="check"><input id="pVisible" type="checkbox" checked /> Hiển thị</label></div>
+        </div>
+        <div class="form-error" id="prodError"></div>
+        <button class="btn btn-gold btn-block" type="submit">Lưu sản phẩm</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="busy" id="busy"><div class="spinner"></div><span id="busyText">Đang lưu…</span></div>
+
+  <script src="../assets/js/config.js"></script>
+  <script src="../assets/js/github.js"></script>
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>

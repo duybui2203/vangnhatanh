@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Vàng Nhật Anh – Trang sức vàng, nhẫn cưới, ngọc phong thủy | 716 Lạc Long Quân, Hà Nội</title>
+  <meta name="description" content="Công ty TNHH Vàng Nhật Anh – nhẫn, dây chuyền, hoa tai, nhẫn cưới, ngọc phong thủy. Bảng giá vàng cập nhật liên tục. 716 Lạc Long Quân, Tây Hồ, Hà Nội. Hotline/Zalo 0862 475 163." />
+  <meta name="theme-color" content="#0b0a08" />
+  <meta property="og:title" content="Vàng Nhật Anh – Giữ trọn giá trị, sáng mãi niềm tin" />
+  <meta property="og:description" content="Trang sức vàng cao cấp & bảng giá vàng cập nhật liên tục. 716 Lạc Long Quân, Hà Nội." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.1.14/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top">
+        <div class="brand-mark"><span>NA</span></div>
+        <div class="brand-text">
+          <div class="brand-name gold-text" id="brandName">CÔNG TY TNHH VÀNG NHẬT ANH</div>
+          <div class="brand-slogan" id="brandSlogan"></div>
+          <div class="brand-addr" id="brandAddr">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <span>716 Lạc Long Quân, Hà Nội</span>
+          </div>
+        </div>
+      </a>
+      <button class="login-btn" id="loginBtn" aria-label="Đăng nhập quản trị" title="Đăng nhập">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ===== PAGEVIEW (slider) ===== -->
+    <section class="hero container">
+      <div class="swiper" id="heroSwiper">
+        <div class="swiper-wrapper" id="heroSlides">
+          <div class="swiper-slide"><div class="slide skeleton"></div></div>
+        </div>
+        <div class="swiper-pagination"></div>
+      </div>
+    </section>
+
+    <!-- ===== CATEGORY CHIPS ===== -->
+    <section class="cats">
+      <div class="cats-scroll" id="catChips"></div>
+    </section>
+
+    <!-- ===== PRODUCTS ===== -->
+    <section class="section container" id="products">
+      <div class="section-head">
+        <h2 class="section-title"><small>Sản phẩm</small><span id="productsTitle">Đang tải…</span></h2>
+        <div class="section-note" id="productsNote"></div>
+      </div>
+      <div class="products" id="productGrid"></div>
+    </section>
+
+    <!-- ===== COMMITMENTS ===== -->
+    <section class="section container" id="commitsSection">
+      <div class="section-head">
+        <h2 class="section-title"><small>Uy tín</small>Cam kết của Vàng Nhật Anh</h2>
+      </div>
+      <div class="commits" id="commits"></div>
+    </section>
+
+    <!-- ===== GOLD PRICES ===== -->
+    <section class="section container" id="prices">
+      <div class="section-head">
+        <h2 class="section-title"><small>Thị trường</small>Bảng giá vàng</h2>
+        <div class="section-note">Đơn vị: nghìn đồng/lượng</div>
+      </div>
+      <div class="price-card">
+        <div class="price-top">
+          <span class="live"><i></i><span id="priceUpdated">Đang tải bảng giá…</span></span>
+          <span class="live" id="priceDate"></span>
+        </div>
+        <div class="price-wrap">
+          <table class="prices">
+            <thead>
+              <tr class="group">
+                <th rowspan="2">Loại vàng</th>
+                <th colspan="2" id="thToday">Hôm nay</th>
+                <th colspan="2" id="thYesterday">Hôm qua</th>
+              </tr>
+              <tr><th>Giá mua</th><th>Giá bán</th><th>Giá mua</th><th>Giá bán</th></tr>
+            </thead>
+            <tbody id="priceBody"></tbody>
+          </table>
+        </div>
+        <div class="price-foot">
+          <span>Nguồn: pnj.com.vn, doji.vn, btmc.vn, phuquygroup.vn, baotinmanhhai.vn</span>
+          <span><b style="color:var(--down)">▼</b> giảm / <b style="color:var(--up)">▲</b> tăng so với hôm qua</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="brand" style="margin-bottom:6px">
+          <div class="brand-mark"><span>NA</span></div>
+          <div class="brand-name gold-text" id="footerName">CÔNG TY TNHH VÀNG NHẬT ANH</div>
+        </div>
+        <ul class="footer-slogans" id="footerSlogans"></ul>
+        <div class="footer-cta">
+          <a class="btn btn-gold" id="footerCall" href="tel:0862475163"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Gọi ngay</a>
+          <a class="btn btn-zalo" id="footerZalo" href="https://zalo.me/0862475163" target="_blank" rel="noopener">Chat Zalo</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="footer-h">Liên hệ</h4>
+        <ul class="footer-list">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg><a id="footerAddr" href="#" target="_blank" rel="noopener">716 Lạc Long Quân, Hà Nội</a></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><a id="footerPhone" href="tel:0862475163">0862 475 163</a></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.2L4 21l1.8-4.6A8 8 0 1 1 21 12z"/></svg><a id="footerZaloTxt" href="https://zalo.me/0862475163" target="_blank" rel="noopener">Zalo: 0862 475 163</a></li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span id="footerHours">8:00 – 19:00 hằng ngày</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer-h">Sản phẩm</h4>
+        <ul class="footer-list" id="footerCats"></ul>
+      </div>
+    </div>
+    <div class="container copyright" id="copyright">© 2026 Công ty TNHH Vàng Nhật Anh. Giá tham khảo, có thể thay đổi theo thị trường.</div>
+  </footer>
+
+  <!-- ===== FLOATING CONTACT ===== -->
+  <div class="fab">
+    <a class="zalo" id="fabZalo" href="https://zalo.me/0862475163" target="_blank" rel="noopener" aria-label="Chat Zalo">Zalo</a>
+    <a class="call" id="fabCall" href="tel:0862475163" aria-label="Gọi điện"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></a>
+  </div>
+
+  <!-- ===== LOGIN MODAL ===== -->
+  <div class="modal" id="loginModal" role="dialog" aria-modal="true">
+    <div class="modal-box">
+      <button class="modal-close" id="loginClose" aria-label="Đóng">×</button>
+      <h3 class="modal-title gold-text">Đăng nhập</h3>
+      <p class="modal-sub">Dành cho quản trị viên Vàng Nhật Anh</p>
+      <form id="loginForm" autocomplete="off">
+        <div class="field"><label for="loginUser">Tài khoản</label><input id="loginUser" name="user" type="text" required autocapitalize="off" /></div>
+        <div class="field"><label for="loginPass">Mật khẩu</label><input id="loginPass" name="pass" type="password" required /></div>
+        <div class="form-error" id="loginError"></div>
+        <button class="btn btn-gold btn-block" type="submit">Đăng nhập</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.1.14/swiper-bundle.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
