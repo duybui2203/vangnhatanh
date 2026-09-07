@@ -175,6 +175,15 @@ button { font-family: inherit; }
 .price-wrap { overflow-x: auto; }
 /* border-collapse: separate -> mỗi ô tự vẽ vạch phải & dưới, không bị "nét đậm nét mờ" */
 table.prices { width: 100%; border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; --grid: #d6c48c; --grid-strong: var(--gold); }
+/* Cột tên hẹp, 4 cột giá chia đều (màn hình rộng) */
+@media (min-width: 481px) {
+  table.prices { table-layout: fixed; }
+  table.prices th:first-child, table.prices td:first-child { width: 20%; }
+  table.prices th:last-child, table.prices td:last-child { padding-right: 14px; }
+}
+@media (min-width: 900px) {
+  table.prices th:first-child, table.prices td:first-child { width: 17%; }
+}
 table.prices th, table.prices td { padding: 10px 8px; text-align: right; white-space: nowrap; border-right: 1px solid var(--grid); border-bottom: 1px solid var(--grid); background: #fff; }
 table.prices th:last-child, table.prices td:last-child { border-right: 0; }
 table.prices tbody tr:last-child td { border-bottom: 0; }
