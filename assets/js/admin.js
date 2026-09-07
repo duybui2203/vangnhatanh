@@ -124,18 +124,33 @@
   const arrowDn = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>';
   const pen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20h4l10-10-4-4L4 16z"/><path d="M13 7l4 4"/></svg>';
   const trash = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>';
+  // Mở tab Sản phẩm của một danh mục
+  function goToProducts(catId, openAdd = false) {
+    state.curCat = catId; $('#prodCat').value = catId;
+    showTab('prods'); loadProds().then(() => { if (openAdd) openProd(-1); });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
   function renderCats() {
-    $('#catList').innerHTML = state.categories.map((c, i) => `
+    $('#catList').innerHTML = state.categories.map((c, i) => {
+      const n = state.products[c.id] ? `${state.products[c.id].length} sản phẩm` : 'Bấm để xem sản phẩm';
+      return `
       <div class="item ${c.visible === false ? 'hidden-item' : ''}">
-        <img src="${imgUrl(c.icon)}" alt="" />
-        <div class="info"><b>${esc(c.name)}${c.badge ? `<span class="tag">${esc(c.badge)}</span>` : ''}${c.visible === false ? '<span class="tag">Ẩn</span>' : ''}</b><span>${esc(c.subtitle || '')} · id: ${esc(c.id)}</span></div>
-        <div class="acts">
-          <button class="icon-btn" data-up="${i}" ${i === 0 ? 'disabled' : ''}>${arrowUp}</button>
-          <button class="icon-btn" data-down="${i}" ${i === state.categories.length - 1 ? 'disabled' : ''}>${arrowDn}</button>
-          <button class="icon-btn" data-edit="${i}">${pen}</button>
-          <button class="icon-btn danger" data-del="${i}">${trash}</button>
+        <div class="item-main" data-open="${esc(c.id)}" title="Xem sản phẩm của ${esc(c.name)}">
+          <span class="order">${i + 1}</span>
+          <img src="${imgUrl(c.icon)}" alt="" />
+          <div class="info"><b>${esc(c.name)}${c.badge ? `<span class="tag">${esc(c.badge)}</span>` : ''}${c.visible === false ? '<span class="tag gray">Đang ẩn</span>' : ''}</b><span>${esc(c.subtitle || 'Chưa có tiêu đề phụ')} · <u>${n}</u></span></div>
         </div>
-      </div>`).join('') || '<p class="help">Chưa có danh mục nào.</p>';
+        <div class="acts">
+          <button class="act" data-open="${esc(c.id)}">Xem sản phẩm</button>
+          <button class="act gold" data-addp="${esc(c.id)}">+ Thêm sản phẩm</button>
+          <button class="act" data-up="${i}" ${i === 0 ? 'disabled' : ''}>↑ Lên</button>
+          <button class="act" data-down="${i}" ${i === state.categories.length - 1 ? 'disabled' : ''}>↓ Xuống</button>
+          <button class="act" data-edit="${i}">✎ Sửa</button>
+          <button class="act danger" data-del="${i}">🗑 Xóa</button>
+        </div>
+      </div>`; }).join('') || '<p class="help">Chưa có danh mục nào. Bấm “+ Thêm danh mục” để tạo.</p>';
+    $$('[data-open]').forEach((b) => b.onclick = () => goToProducts(b.dataset.open));
+    $$('[data-addp]').forEach((b) => b.onclick = () => goToProducts(b.dataset.addp, true));
     $$('[data-up]').forEach((b) => b.onclick = () => moveCat(+b.dataset.up, -1));
     $$('[data-down]').forEach((b) => b.onclick = () => moveCat(+b.dataset.down, 1));
     $$('[data-edit]').forEach((b) => b.onclick = () => openCat(+b.dataset.edit));
@@ -209,17 +224,23 @@
     }
     if (state.curCat !== id) return;
     const items = state.products[id];
+    const cat = state.categories.find((c) => c.id === id);
+    $('#prodTitle').textContent = `Sản phẩm trong “${cat?.name || id}”`;
+    $('#prodCount').textContent = `${items.length} sản phẩm`;
     list.innerHTML = items.map((p, i) => `
       <div class="item ${p.visible === false ? 'hidden-item' : ''}">
-        <img src="${imgUrl(p.image)}" alt="" />
-        <div class="info"><b>${esc(p.name)}${p.badge ? `<span class="tag">${esc(p.badge)}</span>` : ''}${p.visible === false ? '<span class="tag">Ẩn</span>' : ''}</b><span>${p.price ? fmtVND(p.price) : 'Liên hệ'}${p.gold ? ' · ' + esc(p.gold) : ''}${p.weight ? ' · ' + esc(p.weight) : ''}</span></div>
-        <div class="acts">
-          <button class="icon-btn" data-pup="${i}" ${i === 0 ? 'disabled' : ''}>${arrowUp}</button>
-          <button class="icon-btn" data-pdown="${i}" ${i === items.length - 1 ? 'disabled' : ''}>${arrowDn}</button>
-          <button class="icon-btn" data-pedit="${i}">${pen}</button>
-          <button class="icon-btn danger" data-pdel="${i}">${trash}</button>
+        <div class="item-main" data-pedit="${i}" title="Bấm để sửa">
+          <span class="order">${i + 1}</span>
+          <img src="${imgUrl(p.image)}" alt="" />
+          <div class="info"><b>${esc(p.name)}${p.badge ? `<span class="tag">${esc(p.badge)}</span>` : ''}${p.visible === false ? '<span class="tag gray">Đang ẩn</span>' : ''}</b><span>${p.price ? fmtVND(p.price) : 'Liên hệ'}${p.gold ? ' · ' + esc(p.gold) : ''}${p.weight ? ' · ' + esc(p.weight) : ''}</span></div>
         </div>
-      </div>`).join('') || '<p class="help">Danh mục này chưa có sản phẩm. Bấm “+ Thêm sản phẩm”.</p>';
+        <div class="acts">
+          <button class="act" data-pup="${i}" ${i === 0 ? 'disabled' : ''}>↑ Lên</button>
+          <button class="act" data-pdown="${i}" ${i === items.length - 1 ? 'disabled' : ''}>↓ Xuống</button>
+          <button class="act" data-pedit="${i}">✎ Sửa</button>
+          <button class="act danger" data-pdel="${i}">🗑 Xóa</button>
+        </div>
+      </div>`).join('') || '<p class="help">Danh mục này chưa có sản phẩm. Bấm “+ Thêm sản phẩm” ở trên.</p>';
     $$('[data-pup]').forEach((b) => b.onclick = () => moveProd(+b.dataset.pup, -1));
     $$('[data-pdown]').forEach((b) => b.onclick = () => moveProd(+b.dataset.pdown, 1));
     $$('[data-pedit]').forEach((b) => b.onclick = () => openProd(+b.dataset.pedit));
@@ -240,6 +261,7 @@
     openModal('#prodModal');
   }
   $('#addProd').addEventListener('click', () => { if (!state.curCat) return toast('Hãy tạo danh mục trước.'); openProd(-1); });
+  $('#backToCats').addEventListener('click', () => { showTab('cats'); renderCats(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
   previewFile($('#pImage'), $('#pImagePrev'));
   $('#prodForm').addEventListener('submit', async (e) => {
     e.preventDefault();

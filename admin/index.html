@@ -8,7 +8,7 @@
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/style.css?v=4" />
-  <link rel="stylesheet" href="../assets/css/admin.css?v=4" />
+  <link rel="stylesheet" href="../assets/css/admin.css?v=5" />
 </head>
 <body>
   <!-- Cổng đăng nhập -->
@@ -67,7 +67,8 @@
       <section class="panel active" id="panel-cats">
         <div class="box">
           <div class="row" style="margin-bottom:10px"><h3 style="margin:0">Danh mục sản phẩm</h3><button class="btn btn-gold btn-sm fix" id="addCat">+ Thêm danh mục</button></div>
-          <p class="help">Mỗi danh mục là một trang trong pageview và một ô ở dải danh mục bên dưới. Dùng mũi tên để đổi thứ tự.</p>
+          <p class="help">Mỗi danh mục là một trang trong pageview và một ô ở dải danh mục trên web. Thứ tự ở đây là thứ tự hiển thị.
+            <b>Bấm vào tên danh mục</b> để xem và quản lý sản phẩm bên trong.</p>
           <div class="list" id="catList"></div>
         </div>
       </section>
@@ -75,11 +76,16 @@
       <!-- ===== Sản phẩm ===== -->
       <section class="panel" id="panel-prods">
         <div class="box">
+          <div class="row" style="margin-bottom:6px">
+            <h3 style="margin:0" id="prodTitle">Sản phẩm</h3>
+            <span class="count fix" id="prodCount"></span>
+          </div>
           <div class="row" style="margin-bottom:10px">
-            <div class="field" style="margin:0"><select id="prodCat"></select></div>
+            <button class="btn btn-ghost btn-sm fix" id="backToCats">← Về Danh mục</button>
+            <div class="field" style="margin:0"><label style="margin:0 0 3px">Đang xem danh mục</label><select id="prodCat"></select></div>
             <button class="btn btn-gold btn-sm fix" id="addProd">+ Thêm sản phẩm</button>
           </div>
-          <p class="help">Để trống giá bán thì web sẽ hiển thị chữ <b>“Liên hệ”</b>.</p>
+          <p class="help">Để trống giá bán thì web hiển thị chữ <b>“Liên hệ”</b>. Bấm vào tên sản phẩm để sửa.</p>
           <div class="list" id="prodList"></div>
         </div>
       </section>
@@ -180,6 +186,6 @@
   <script src="../assets/js/config.js?v=7"></script>
   <script src="../assets/js/auth.js?v=7"></script>
   <script src="../assets/js/github.js?v=7"></script>
-  <script src="../assets/js/admin.js?v=9"></script>
+  <script src="../assets/js/admin.js?v=10"></script>
 </body>
 </html>

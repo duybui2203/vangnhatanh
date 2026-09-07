@@ -26,8 +26,20 @@ body { background: var(--bg); }
 .check input { width: 18px; height: 18px; accent-color: var(--gold); }
 .list { display: grid; gap: 8px; }
 .item { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; border: 1px solid var(--line-soft); background: var(--bg); flex-wrap: wrap; }
-.item .acts { display: flex; gap: 6px; flex: none; }
-@media (max-width: 560px) { .item .acts { flex-basis: 100%; justify-content: flex-end; } }
+.item-main { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 220px; cursor: pointer; border-radius: 10px; padding: 2px; }
+.item-main:hover { background: #fff6dc; }
+.item-main .order { width: 22px; height: 22px; border-radius: 50%; background: var(--bg-3); color: var(--gold-3); font-size: 11px; font-weight: 700; display: grid; place-items: center; flex: none; }
+.item .acts { display: flex; gap: 6px; flex: none; flex-wrap: wrap; }
+.act { height: 34px; padding: 0 12px; border-radius: 9px; border: 1px solid var(--line); background: #fff; color: var(--text); font-weight: 600; font-size: 12.5px; cursor: pointer; white-space: nowrap; }
+.act:hover { border-color: var(--gold); color: var(--gold-3); background: #fffaf0; }
+.act:disabled { opacity: .35; cursor: default; }
+.act.gold { background: linear-gradient(135deg, #f3dc8a, var(--gold)); border-color: transparent; color: #2b1f05; }
+.act.gold:hover { filter: brightness(1.04); color: #2b1f05; }
+.act.danger { color: var(--down); border-color: rgba(217,54,62,0.35); }
+.act.danger:hover { background: #fdecec; border-color: var(--down); color: var(--down); }
+.tag.gray { background: #eee9dc; color: var(--muted); }
+.count { font-size: 12.5px; color: var(--muted); }
+@media (max-width: 560px) { .item .acts { flex-basis: 100%; justify-content: flex-start; } .item-main { min-width: 100%; } .act { flex: 1 1 auto; text-align: center; } }
 .item img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: var(--bg-3); flex: none; }
 .item .info { flex: 1; min-width: 0; }
 .item .info b { display: block; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
