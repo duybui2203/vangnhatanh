@@ -47,11 +47,11 @@
   async function sha256(str) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join(''); }
   $('#gateForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const ok = $('#gateUser').value.trim() === C.admin.user && (await sha256($('#gatePass').value)) === C.admin.passHash;
+    const ok = await VNA_AUTH.login($('#gateUser').value, $('#gatePass').value);
     if (!ok) return ($('#gateError').textContent = 'Sai tài khoản hoặc mật khẩu.');
-    sessionStorage.setItem('vna_admin', '1'); enter();
+    enter();
   });
-  $('#logoutBtn').addEventListener('click', () => { sessionStorage.removeItem('vna_admin'); location.href = '../'; });
+  $('#logoutBtn').addEventListener('click', () => { VNA_AUTH.logout(); location.href = '../'; });
 
   // ---------- Tabs ----------
   function showTab(name) { $$('.tab').forEach((t) => t.classList.toggle('active', t.dataset.tab === name)); $$('.panel').forEach((p) => p.classList.toggle('active', p.id === 'panel-' + name)); history.replaceState(null, '', '#' + name); }
@@ -63,7 +63,23 @@
     const t = $('#tokenInput').value.trim(); if (!t) return;
     GH.setToken(t); await checkToken();
   });
-  $('#tokenClear').addEventListener('click', () => { GH.setToken(''); $('#tokenInput').value = ''; $('#tokenStatus').innerHTML = ''; $('#repoInfo').textContent = 'Chưa kết nối GitHub'; });
+  $('#tokenClear').addEventListener('click', () => { GH.setToken(''); sessionStorage.removeItem('vna_gh_token_session'); $('#tokenInput').value = ''; $('#tokenStatus').innerHTML = ''; $('#repoInfo').textContent = 'Chưa kết nối GitHub'; });
+  // Lưu token lên web dưới dạng mã hoá bằng mật khẩu admin -> máy khác chỉ cần đăng nhập tk/mk
+  $('#tokenPublish').addEventListener('click', async () => {
+    const t = $('#tokenInput').value.trim() || GH.token(); if (!t) return alert('Chưa có token.');
+    const pass = prompt('Nhập lại mật khẩu admin để mã hoá token:'); if (pass == null) return;
+    if (!(await VNA_AUTH.checkPassword(C.admin.user, pass))) return alert('Mật khẩu không đúng.');
+    GH.setToken(t);
+    await run('Đang mã hoá & lưu token…', async () => {
+      const blob = await VNA_AUTH.encrypt(pass, t);
+      await GH.writeJSON('data/auth.json', blob, 'Lưu token admin (đã mã hoá)');
+    });
+    await checkToken();
+  });
+  $('#tokenUnpublish').addEventListener('click', async () => {
+    if (!confirm('Xóa token đã lưu trên web? Các máy khác sẽ phải nhập token lại.')) return;
+    await run('Đang xóa…', () => GH.deleteFile('data/auth.json', 'Xóa token admin đã lưu'));
+  });
   async function checkToken() {
     const st = $('#tokenStatus');
     if (!GH.token()) { st.innerHTML = '<div class="status err">Chưa có token – chỉ xem được, không lưu được.</div>'; $('#repoInfo').textContent = 'Chưa kết nối GitHub'; return; }

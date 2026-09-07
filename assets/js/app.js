@@ -162,8 +162,7 @@
     $('#thYesterday').textContent = yd ? `Hôm qua (${dmy(yd)})` : 'Hôm qua';
   }
 
-  // ---------- Đăng nhập ----------
-  async function sha256(str) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str)); return [...new Uint8Array(b)].map((x) => x.toString(16).padStart(2, '0')).join(''); }
+  // ---------- Đăng nhập (xem auth.js) ----------
   function setupLogin() {
     const modal = $('#loginModal');
     $('#loginBtn').addEventListener('click', () => { if (sessionStorage.getItem('vna_admin') === '1') return (location.href = 'admin/'); modal.classList.add('open'); setTimeout(() => $('#loginUser').focus(), 50); });
@@ -171,10 +170,10 @@
     modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
     $('#loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const u = $('#loginUser').value.trim(), p = $('#loginPass').value;
-      const ok = u === C.admin.user && (await sha256(p)) === C.admin.passHash;
+      const btn = e.target.querySelector('button[type=submit]'); btn.disabled = true; btn.textContent = 'Đang đăng nhập…';
+      const ok = await VNA_AUTH.login($('#loginUser').value, $('#loginPass').value);
+      btn.disabled = false; btn.textContent = 'Đăng nhập';
       if (!ok) { $('#loginError').textContent = 'Sai tài khoản hoặc mật khẩu.'; return; }
-      sessionStorage.setItem('vna_admin', '1');
       location.href = 'admin/';
     });
   }

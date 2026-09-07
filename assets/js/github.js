@@ -3,7 +3,7 @@ window.GH = (function () {
   const C = window.VNA_CONFIG;
   const KEY = 'vna_gh_token';
   const base = () => `https://api.github.com/repos/${C.owner}/${C.dataRepo}`;
-  const token = () => localStorage.getItem(KEY) || '';
+  const token = () => localStorage.getItem(KEY) || sessionStorage.getItem('vna_gh_token_session') || '';
   const setToken = (t) => (t ? localStorage.setItem(KEY, t.trim()) : localStorage.removeItem(KEY));
 
   async function api(path, opts = {}) {
