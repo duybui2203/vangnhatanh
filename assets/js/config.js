@@ -6,6 +6,7 @@ window.VNA_CONFIG = {
   // Tài khoản admin (mật khẩu được lưu dạng băm SHA-256, không lưu chữ thường)
   admin: { user: 'hunghien', passHash: 'f3884f2add5922ea0077b3e9b7c37c8391da559dda9bbc9bbaadf7152bb84e08' },
   pricesRefreshMs: 60 * 1000,     // tần suất làm mới bảng giá trên trình duyệt
+  dataRefreshMs: 2 * 60 * 1000,   // tần suất kiểm tra dữ liệu mới (danh mục, sản phẩm, thông tin) khi trang đang mở
   slideDelayMs: 3000,             // pageview tự chuyển sau 3 giây
 };
 // Nơi đọc dữ liệu: mặc định là raw.githubusercontent.com của repo dữ liệu.

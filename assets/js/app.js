@@ -65,7 +65,8 @@
     const box = $('#brandSlogan');
     box.innerHTML = (s.slogans || []).map((x, i) => `<span class="${i === 0 ? 'on' : ''}">${esc(x)}</span>`).join('');
     const spans = box.querySelectorAll('span');
-    if (spans.length > 1) { let i = 0; setInterval(() => { spans[i].classList.remove('on'); i = (i + 1) % spans.length; spans[i].classList.add('on'); }, 3500); }
+    clearInterval(state.sloganTimer);
+    if (spans.length > 1) { let i = 0; state.sloganTimer = setInterval(() => { spans[i].classList.remove('on'); i = (i + 1) % spans.length; spans[i].classList.add('on'); }, 3500); }
     // cam kết
     const cm = $('#commits');
     if (s.commitments?.length) cm.innerHTML = s.commitments.map((c) => `<div class="commit"><div class="ic">${ICONS[c.icon] || ICONS.star}</div><div><b>${esc(c.title)}</b><p>${esc(c.text)}</p></div></div>`).join('');
@@ -191,6 +192,32 @@
     });
   }
 
+  // ---------- Tự cập nhật khi admin vừa sửa (không cần tải lại trang) ----------
+  // Đọc bản "live" (kèm tham số chống cache) của các file dữ liệu; khác bản đang hiển thị thì ghim lại commit và vẽ lại.
+  let checking = false;
+  async function checkForUpdates() {
+    if (checking || document.hidden) return; checking = true;
+    try {
+      const o = { bust: Date.now(), live: true, optional: true };
+      const [settings, categories, products] = await Promise.all([
+        loadJSON('data/settings.json', o), loadJSON('data/categories.json', o),
+        state.active ? loadJSON(`data/products/${state.active}.json`, o) : null,
+      ]);
+      const changed = (settings && JSON.stringify(settings) !== JSON.stringify(state.settings))
+        || (categories && JSON.stringify(categories) !== JSON.stringify(state.categories))
+        || (products && JSON.stringify(products) !== JSON.stringify(state.products[state.active] || []));
+      if (!changed) return;
+      C.dataBase = C.liveBase || C.dataBase; await pinLatestCommit();      // lấy commit mới để ảnh mới cũng đổi đường dẫn
+      const keep = state.active;
+      state.settings = settings || state.settings; state.categories = categories || state.categories; state.products = {};
+      renderSettings(state.settings);
+      renderCategories(state.categories);
+      if (keep && state.categories.some((c) => c.id === keep && c.visible !== false)) selectCategory(keep, false);
+      renderPrices();
+    } catch (e) { console.warn('checkForUpdates', e.message); }
+    finally { checking = false; }
+  }
+
   // ---------- Khởi động ----------
   async function init() {
     setupLogin();
@@ -202,6 +229,8 @@
       renderCategories(categories);
       renderPrices();
       setInterval(renderPrices, C.pricesRefreshMs);
+      setInterval(checkForUpdates, C.dataRefreshMs || 120000);
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdates(); });
     } catch (err) {
       console.error(err);
       $('#productGrid').innerHTML = `<div class="empty">Không tải được dữ liệu (${esc(err.message)}).<br/>Kiểm tra repo <b>${esc(C.owner)}/${esc(C.dataRepo)}</b> đã công khai và có thư mục <b>data/</b>.</div>`;
