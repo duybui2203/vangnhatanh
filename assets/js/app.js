@@ -149,7 +149,7 @@
       <td>${fmtK(own.buy)}${delta(own.buy, own.prevBuy)}</td><td>${fmtK(own.sell)}${delta(own.sell, own.prevSell)}</td>
       <td class="y">${fmtK(own.prevBuy)}</td><td class="y">${fmtK(own.prevSell)}</td></tr>`);
     for (const r of latest?.rows || []) {
-      const y = ymap[r.id];
+      const y = ymap[r.id] || (r.prevBuy || r.prevSell ? { buy: r.prevBuy, sell: r.prevSell } : null);
       rows.push(`<tr class="${r.stale ? 'stale' : ''}"><td><span class="name">${esc(r.name)}</span><span class="src">${esc(r.source || '')}${r.stale && r.time ? ' · ' + fmtTime(r.time) : ''}</span></td>
         <td>${fmtK(r.buy)}${delta(r.buy, y?.buy)}</td><td>${fmtK(r.sell)}${delta(r.sell, y?.sell)}</td>
         <td class="y">${fmtK(y?.buy)}</td><td class="y">${fmtK(y?.sell)}</td></tr>`);
@@ -158,7 +158,8 @@
     $('#priceUpdated').textContent = latest ? `Cập nhật lúc ${fmtTime(latest.updatedAt)}` : 'Chưa có dữ liệu giá thị trường';
     $('#priceDate').textContent = latest?.date ? `Hôm nay ${dmy(latest.date)}` : '';
     $('#thToday').textContent = latest?.date ? `Hôm nay (${dmy(latest.date)})` : 'Hôm nay';
-    $('#thYesterday').textContent = yest?.date ? `Hôm qua (${dmy(yest.date)})` : 'Hôm qua';
+    const yd = yest?.date || latest?.prevDate;
+    $('#thYesterday').textContent = yd ? `Hôm qua (${dmy(yd)})` : 'Hôm qua';
   }
 
   // ---------- Đăng nhập ----------
