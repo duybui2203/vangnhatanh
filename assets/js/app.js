@@ -9,11 +9,24 @@
   const imgUrl = (p) => (!p ? '' : /^https?:/i.test(p) ? p : C.dataBase + p);
   const bucket = () => Math.floor(Date.now() / 300000); // đổi mỗi 5 phút để vượt cache CDN
 
-  async function loadJSON(path, { bust = bucket(), optional = false } = {}) {
-    const url = C.dataBase + path + (bust != null ? `?v=${bust}` : '');
+  // live = đọc theo nhánh (dùng cho bảng giá, luôn kèm tham số chống cache); mặc định đọc theo commit đã ghim
+  async function loadJSON(path, { bust = bucket(), optional = false, live = false } = {}) {
+    const url = (live ? C.liveBase || C.dataBase : C.dataBase) + path + (bust != null ? `?v=${bust}` : '');
     const r = await fetch(url, { cache: 'no-cache' });
     if (!r.ok) { if (optional) return null; throw new Error(`${path}: HTTP ${r.status}`); }
     return r.json();
+  }
+
+  // Ghim dữ liệu + ảnh vào commit mới nhất của repo dữ liệu -> vừa lưu trong admin là F5 thấy ngay,
+  // không dính cache 5 phút của raw.githubusercontent.com. Lỗi thì dùng URL nhánh như cũ.
+  async function pinLatestCommit() {
+    if (sessionStorage.getItem('vna_data_base')) return; // đang chạy thử local
+    try {
+      const r = await fetch(`https://api.github.com/repos/${C.owner}/${C.dataRepo}/commits/${C.branch}`, { headers: { Accept: 'application/vnd.github.sha' }, cache: 'no-store' });
+      if (!r.ok) return;
+      const sha = (await r.text()).trim();
+      if (/^[0-9a-f]{40}$/.test(sha)) { C.liveBase = C.dataBase; C.dataBase = `https://raw.githubusercontent.com/${C.owner}/${C.dataRepo}/${sha}/`; }
+    } catch {}
   }
 
   const ICONS = {
@@ -138,9 +151,9 @@
   async function renderPrices() {
     const s = state.settings;
     let latest = null, yest = null;
-    try { latest = await loadJSON('data/prices/latest.json', { bust: Date.now() }); } catch { latest = null; }
+    try { latest = await loadJSON('data/prices/latest.json', { bust: Date.now(), live: true }); } catch { latest = null; }
     if (latest?.date) {
-      for (let i = 1; i <= 4 && !yest; i++) { try { yest = await loadJSON(`data/prices/history/${shiftDate(latest.date, -i)}.json`, { optional: true }); } catch { yest = null; } }
+      for (let i = 1; i <= 4 && !yest; i++) { try { yest = await loadJSON(`data/prices/history/${shiftDate(latest.date, -i)}.json`, { optional: true, live: true }); } catch { yest = null; } }
     }
     const ymap = Object.fromEntries((yest?.rows || []).map((r) => [r.id, r]));
     const own = s.ownPrice || {};
@@ -182,6 +195,7 @@
   async function init() {
     setupLogin();
     try {
+      await pinLatestCommit();
       const [settings, categories] = await Promise.all([loadJSON('data/settings.json'), loadJSON('data/categories.json')]);
       state.settings = settings; state.categories = categories;
       renderSettings(settings);
