@@ -101,7 +101,7 @@
       e.preventDefault();
       selectCategory(el.dataset.cat, true);
     }));
-    if (visible.length) selectCategory((visible.find((c) => /bán chạy|ban chay|hot/i.test(c.badge || '')) || visible.find((c) => c.badge) || visible[0]).id, false);
+    if (visible.length) selectCategory(visible[0].id, false); // mặc định: danh mục đầu tiên
   }
 
   async function selectCategory(id, scroll) {
@@ -109,7 +109,7 @@
     state.active = id;
     document.querySelectorAll('.cat-chip').forEach((b) => b.classList.toggle('active', b.dataset.cat === id));
     const chip = document.querySelector(`.cat-chip[data-cat="${id}"]`), rail = $('#catChips');
-    if (chip && rail) rail.scrollTo({ left: chip.offsetLeft - rail.clientWidth / 2 + chip.offsetWidth / 2, behavior: scroll ? 'smooth' : 'auto' });
+    if (chip && rail && scroll) rail.scrollTo({ left: chip.offsetLeft - rail.clientWidth / 2 + chip.offsetWidth / 2, behavior: 'smooth' }); // chỉ cuộn khi người dùng bấm
     $('#productsTitle').textContent = cat.name;
     $('#productsNote').textContent = cat.subtitle || '';
     if (scroll) $('#products').scrollIntoView({ behavior: 'smooth', block: 'start' });
