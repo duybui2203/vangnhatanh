@@ -21,7 +21,7 @@
   async function run(text, fn) {
     if (!GH.token()) { toast('Chưa có GitHub token. Vào tab “Kết nối GitHub”.'); showTab('token'); return false; }
     busy(true, text);
-    try { await fn(); toast('Đã lưu. Website ngoài sẽ cập nhật sau tối đa 5 phút.'); return true; }
+    try { await fn(); toast('Đã lưu. Website sẽ tự cập nhật trong giây lát.'); return true; }
     catch (e) { console.error(e); alert('Lỗi: ' + e.message); return false; }
     finally { busy(false); }
   }
@@ -302,7 +302,8 @@
     $('#tokenInput').value = GH.token();
     await checkToken();
     const hash = location.hash.slice(1);
-    if (hash && $('#panel-' + hash)) showTab(hash); else if (!GH.token()) showTab('token');
+    showTab(hash && $('#panel-' + hash) ? hash : 'cats'); // luôn vào Danh mục (hoặc tab đang mở trước đó)
+    if (!GH.token()) toast('Chưa có quyền lưu trên máy này. Xem tab “Kết nối GitHub” khi cần lưu.', 5000);
     try { await loadAll(); } catch (e) { alert('Không tải được dữ liệu: ' + e.message); }
   }
   if (sessionStorage.getItem('vna_admin') === '1') enter();
