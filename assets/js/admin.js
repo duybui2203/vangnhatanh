@@ -59,35 +59,52 @@
 
   // ---------- Token ----------
   $('#repoName').textContent = `${C.owner}/${C.dataRepo}`;
+  // Một nút duy nhất: lưu token vào máy này + mã hoá bằng mật khẩu admin và lưu lên web
+  // -> các máy khác chỉ cần đăng nhập tài khoản/mật khẩu là tự có token, không phải nhập lại.
+  async function publishToken(t, pass) {
+    const blob = await VNA_AUTH.encrypt(pass, t);
+    await GH.writeJSON('data/auth.json', blob, 'Lưu token admin (đã mã hoá)');
+  }
+  async function askPassword() {
+    const pass = prompt('Nhập lại mật khẩu admin (để mã hoá token dùng cho mọi máy):'); if (pass == null) return null;
+    if (!(await VNA_AUTH.checkPassword(C.admin.user, pass))) { alert('Mật khẩu không đúng.'); return null; }
+    return pass;
+  }
   $('#tokenSave').addEventListener('click', async () => {
-    const t = $('#tokenInput').value.trim(); if (!t) return;
-    GH.setToken(t); await checkToken();
-  });
-  $('#tokenClear').addEventListener('click', () => { GH.setToken(''); sessionStorage.removeItem('vna_gh_token_session'); $('#tokenInput').value = ''; $('#tokenStatus').innerHTML = ''; $('#repoInfo').textContent = 'Chưa kết nối GitHub'; });
-  // Lưu token lên web dưới dạng mã hoá bằng mật khẩu admin -> máy khác chỉ cần đăng nhập tk/mk
-  $('#tokenPublish').addEventListener('click', async () => {
-    const t = $('#tokenInput').value.trim() || GH.token(); if (!t) return alert('Chưa có token.');
-    const pass = prompt('Nhập lại mật khẩu admin để mã hoá token:'); if (pass == null) return;
-    if (!(await VNA_AUTH.checkPassword(C.admin.user, pass))) return alert('Mật khẩu không đúng.');
+    const t = $('#tokenInput').value.trim() || GH.token(); if (!t) return alert('Hãy dán token trước.');
     GH.setToken(t);
-    await run('Đang mã hoá & lưu token…', async () => {
-      const blob = await VNA_AUTH.encrypt(pass, t);
-      await GH.writeJSON('data/auth.json', blob, 'Lưu token admin (đã mã hoá)');
-    });
-    await checkToken();
+    const ok = await checkToken(); if (!ok) return;
+    const pass = await askPassword(); if (!pass) return;
+    if (await run('Đang lưu token dùng cho mọi máy…', () => publishToken(t, pass))) { state.published = true; updateTokenTab(); showTab('cats'); }
   });
-  $('#tokenUnpublish').addEventListener('click', async () => {
-    if (!confirm('Xóa token đã lưu trên web? Các máy khác sẽ phải nhập token lại.')) return;
-    await run('Đang xóa…', () => GH.deleteFile('data/auth.json', 'Xóa token admin đã lưu'));
+  $('#tokenClear').addEventListener('click', async () => {
+    if (!confirm('Xóa token khỏi máy này và trên web? Sau đó không máy nào lưu được cho tới khi dán token mới.')) return;
+    if (GH.token()) await run('Đang xóa…', () => GH.deleteFile('data/auth.json', 'Xóa token admin đã lưu'));
+    GH.setToken(''); sessionStorage.removeItem('vna_gh_token_session'); state.published = false;
+    $('#tokenInput').value = ''; $('#tokenStatus').innerHTML = ''; $('#repoInfo').textContent = 'Chưa kết nối GitHub'; updateTokenTab();
   });
   async function checkToken() {
     const st = $('#tokenStatus');
-    if (!GH.token()) { st.innerHTML = '<div class="status err">Chưa có token – chỉ xem được, không lưu được.</div>'; $('#repoInfo').textContent = 'Chưa kết nối GitHub'; return; }
+    if (!GH.token()) { st.innerHTML = '<div class="status err">Chưa có token – chỉ xem được, không lưu được.</div>'; $('#repoInfo').textContent = 'Chưa kết nối GitHub'; return false; }
     try {
       const r = await GH.check();
       st.innerHTML = r.canPush ? `<div class="status ok">✓ Kết nối OK: ${esc(r.name)} – có quyền ghi.</div>` : `<div class="status err">Kết nối được ${esc(r.name)} nhưng token KHÔNG có quyền ghi (Contents: Read and write).</div>`;
       $('#repoInfo').textContent = `${r.name} · ${r.canPush ? 'sẵn sàng lưu' : 'chỉ đọc'}`;
-    } catch (e) { st.innerHTML = `<div class="status err">${esc(e.message)}</div>`; $('#repoInfo').textContent = 'Token lỗi'; }
+      return r.canPush;
+    } catch (e) { st.innerHTML = `<div class="status err">${esc(e.message)}</div>`; $('#repoInfo').textContent = 'Token lỗi'; return false; }
+  }
+  // Tab "Kết nối GitHub" chỉ hiện khi còn việc phải làm (chưa có token, hoặc token chưa được lưu lên web)
+  function updateTokenTab() { $('#tabToken').hidden = !!(GH.token() && state.published); }
+  async function ensurePublished() {
+    try { const r = await fetch(`${C.dataBase}data/auth.json?v=${Date.now()}`, { cache: 'no-store' }); state.published = r.ok; } catch { state.published = false; }
+    updateTokenTab();
+    if (GH.token() && !state.published && localStorage.getItem('vna_gh_token')) {
+      // Máy này đã có token nhưng chưa lưu lên web -> đề nghị lưu ngay để máy khác dùng được
+      if (confirm('Token mới chỉ có trên máy này. Lưu lên web (đã mã hoá) để điện thoại/máy khác chỉ cần đăng nhập là dùng được?')) {
+        const pass = await askPassword(); if (!pass) return;
+        if (await run('Đang lưu token dùng cho mọi máy…', () => publishToken(GH.token(), pass))) { state.published = true; updateTokenTab(); }
+      }
+    }
   }
 
   // ---------- Tải dữ liệu (qua API để không bị cache) ----------
@@ -305,6 +322,7 @@
     showTab(hash && $('#panel-' + hash) ? hash : 'cats'); // luôn vào Danh mục (hoặc tab đang mở trước đó)
     if (!GH.token()) toast('Chưa có quyền lưu trên máy này. Xem tab “Kết nối GitHub” khi cần lưu.', 5000);
     try { await loadAll(); } catch (e) { alert('Không tải được dữ liệu: ' + e.message); }
+    ensurePublished();
   }
   if (sessionStorage.getItem('vna_admin') === '1') enter();
 })();

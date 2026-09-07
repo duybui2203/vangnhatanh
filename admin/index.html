@@ -42,7 +42,7 @@
         <button class="tab" data-tab="prods">Sản phẩm</button>
         <button class="tab" data-tab="price">Giá Vàng Nhật Anh</button>
         <button class="tab" data-tab="info">Thông tin chung</button>
-        <button class="tab" data-tab="token">Kết nối GitHub</button>
+        <button class="tab" data-tab="token" id="tabToken">Kết nối GitHub</button>
       </div>
 
       <!-- ===== Kết nối GitHub ===== -->
@@ -52,14 +52,12 @@
           <p class="help">Trang admin lưu dữ liệu trực tiếp vào repo <b id="repoName"></b>. Cần một <b>Personal Access Token</b> có quyền ghi (Contents: Read and write) cho repo này.
             Tạo tại <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> → Repository access: chọn đúng repo → Permissions → Contents: <b>Read and write</b>.
             </p>
-          <p class="help"><b>Cách dùng đơn giản nhất:</b> dán token một lần rồi bấm <b>“Lưu lên web”</b>. Token được mã hoá bằng mật khẩu admin và lưu vào repo dữ liệu.
-            Từ đó, trên bất kỳ máy nào bạn chỉ cần đăng nhập tài khoản/mật khẩu là dùng được, không phải nhập token nữa.</p>
+          <p class="help">Chỉ cần làm <b>một lần</b>: dán token rồi bấm <b>Lưu token</b>. Token được mã hoá bằng mật khẩu admin và lưu lên web,
+            từ đó mọi máy/điện thoại chỉ cần đăng nhập tài khoản/mật khẩu là dùng được. Tab này sẽ tự ẩn khi đã xong.</p>
           <div class="field"><label>GitHub token</label><input id="tokenInput" type="password" placeholder="github_pat_…" autocomplete="off" /></div>
           <div class="row">
-            <button class="btn btn-gold btn-sm fix" id="tokenSave">Lưu &amp; kiểm tra</button>
-            <button class="btn btn-gold btn-sm fix" id="tokenPublish">Lưu lên web (mã hoá)</button>
-            <button class="btn btn-ghost btn-sm fix" id="tokenClear">Xóa khỏi máy này</button>
-            <button class="btn btn-ghost btn-sm fix" id="tokenUnpublish">Xóa trên web</button>
+            <button class="btn btn-gold btn-sm fix" id="tokenSave">Lưu token (dùng cho mọi máy)</button>
+            <button class="btn btn-ghost btn-sm fix" id="tokenClear">Xóa token</button>
           </div>
           <div id="tokenStatus"></div>
         </div>
@@ -182,6 +180,6 @@
   <script src="../assets/js/config.js?v=7"></script>
   <script src="../assets/js/auth.js?v=7"></script>
   <script src="../assets/js/github.js?v=7"></script>
-  <script src="../assets/js/admin.js?v=8"></script>
+  <script src="../assets/js/admin.js?v=9"></script>
 </body>
 </html>
