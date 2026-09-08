@@ -14,24 +14,24 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.1.14/swiper-bundle.min.css" />
-  <link rel="stylesheet" href="assets/css/style.css?v=11" />
+  <link rel="stylesheet" href="assets/css/style.css?v=13" />
 </head>
 <body>
 
   <!-- ===== HEADER ===== -->
   <header class="site-header">
     <div class="container header-inner">
-      <a class="brand" href="#top">
-        <div class="brand-mark"><span>NA</span></div>
+      <div class="brand">
+        <a class="brand-mark" href="#top" aria-label="Về đầu trang"><span>NA</span></a>
         <div class="brand-text">
-          <div class="brand-name gold-text" id="brandName">CÔNG TY TNHH VÀNG NHẬT ANH</div>
+          <a class="brand-name gold-text" id="brandName" href="#top">CÔNG TY TNHH VÀNG NHẬT ANH</a>
           <div class="brand-slogan" id="brandSlogan"></div>
-          <div class="brand-addr" id="brandAddr">
+          <a class="brand-addr" id="brandAddr" href="https://www.google.com/maps/search/?api=1&query=716+L%E1%BA%A1c+Long+Qu%C3%A2n%2C+T%C3%A2y+H%E1%BB%93%2C+H%C3%A0+N%E1%BB%99i" target="_blank" rel="noopener" title="Mở bản đồ">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
             <span>716 Lạc Long Quân, Hà Nội</span>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
       <button class="login-btn" id="loginBtn" aria-label="Đăng nhập quản trị" title="Đăng nhập">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8.5" r="4"/><path d="M4 20c1.5-3.5 4.5-5 8-5s6.5 1.5 8 5"/></svg>
       </button>
@@ -58,7 +58,7 @@
     <section class="section container" id="prices">
       <div class="price-card">
         <div class="price-title">
-          <h2 class="price-brand gold-text" id="priceTitle">VÀNG BẠC NHẬT ANH</h2>
+          <h2 class="price-brand gold-text" id="priceTitle">VÀNG BẠC ĐÁ QUÝ NHẬT ANH</h2>
           <div class="price-clock" id="priceClock"></div>
         </div>
         <div class="price-wrap">
@@ -92,7 +92,7 @@
     <!-- ===== COMMITMENTS ===== -->
     <section class="section container" id="commitsSection">
       <div class="section-head">
-        <h2 class="section-title"><small>Uy tín</small>Cam kết của Vàng Nhật Anh</h2>
+        <h2 class="section-title"><small>Uy tín</small><span id="commitsTitle">Cam kết của Vàng Bạc Đá Quý Nhật Anh</span></h2>
       </div>
       <div class="commits" id="commits"></div>
     </section>
@@ -155,6 +155,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/11.1.14/swiper-bundle.min.js"></script>
   <script src="assets/js/config.js?v=7"></script>
   <script src="assets/js/auth.js?v=7"></script>
-  <script src="assets/js/app.js?v=14"></script>
+  <script src="assets/js/app.js?v=16"></script>
 </body>
 </html>

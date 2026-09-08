@@ -51,8 +51,9 @@
     const nameHTML = m ? `<small>${esc(m[1].toUpperCase())}</small>${esc(m[3].toUpperCase())}` : esc(s.company);
     $('#brandName').innerHTML = nameHTML;
     $('#footerName').innerHTML = nameHTML;
-    $('#brandAddr span').textContent = s.address;
-    const addr = $('#footerAddr'); addr.textContent = s.address; addr.href = s.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}`;
+    const mapHref = s.mapUrl || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.address)}`;
+    $('#brandAddr span').textContent = s.address; $('#brandAddr').href = mapHref;
+    const addr = $('#footerAddr'); addr.textContent = s.address; addr.href = mapHref;
     const tel = `tel:${s.phone}`, zl = `https://zalo.me/${s.zalo || s.phone}`;
     ['#footerCall', '#footerPhone', '#fabCall'].forEach((id) => ($(id).href = tel));
     ['#footerZalo', '#footerZaloTxt', '#fabZalo'].forEach((id) => ($(id).href = zl));
@@ -69,6 +70,7 @@
     clearInterval(state.sloganTimer);
     if (spans.length > 1) { let i = 0; state.sloganTimer = setInterval(() => { spans[i].classList.remove('on'); i = (i + 1) % spans.length; spans[i].classList.add('on'); }, 3500); }
     // cam kết
+    $('#commitsTitle').textContent = `Cam kết của ${s.brand || 'Vàng Bạc Đá Quý Nhật Anh'}`;
     const cm = $('#commits');
     if (s.commitments?.length) cm.innerHTML = s.commitments.map((c) => `<div class="commit"><div class="ic">${ICONS[c.icon] || ICONS.star}</div><div><b>${esc(c.title)}</b><p>${esc(c.text)}</p></div></div>`).join('');
     else $('#commitsSection').hidden = true;
@@ -155,14 +157,15 @@
     const p = state.settings?.prices || {};
     const rows = (p.rows || []).map((r) => `
       <tr class="${r.own ? 'own' : ''}"><td><span class="name">${esc(r.name)}</span>${r.note ? `<span class="src">${esc(r.note)}</span>` : ''}</td>
-        <td>${fmtK(r.buy)}${delta(r.buy, r.prevBuy)}</td><td>${fmtK(r.sell)}${delta(r.sell, r.prevSell)}</td>
+        <td><span class="v">${fmtK(r.buy)}${delta(r.buy, r.prevBuy)}</span><span class="yv">Hôm qua ${fmtK(r.prevBuy)}</span></td>
+        <td><span class="v">${fmtK(r.sell)}${delta(r.sell, r.prevSell)}</span><span class="yv">Hôm qua ${fmtK(r.prevSell)}</span></td>
         <td class="y">${fmtK(r.prevBuy)}</td><td class="y">${fmtK(r.prevSell)}</td></tr>`);
     $('#priceBody').innerHTML = rows.join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Chưa có bảng giá</td></tr>';
     $('#priceUpdated').textContent = p.updatedAt ? `Cập nhật lúc ${fmtTime(p.updatedAt)}` : '';
     $('#thToday').textContent = p.date ? `Hôm nay (${dmy(p.date)})` : 'Hôm nay';
     $('#thYesterday').textContent = p.prevDate ? `Hôm qua (${dmy(p.prevDate)})` : 'Hôm qua';
     $('#priceUnit').textContent = `Đơn vị: ${p.unit || 'nghìn đồng/chỉ'}`;
-    $('#priceTitle').textContent = p.title || 'VÀNG BẠC NHẬT ANH';
+    $('#priceTitle').textContent = p.title || 'VÀNG BẠC ĐÁ QUÝ NHẬT ANH';
     startClock();
   }
   // Dòng "Ngày 03 Tháng 09 Năm 2026 | 12 : 11 : 57" chạy theo giờ Việt Nam
@@ -170,9 +173,13 @@
   function startClock() {
     if (clockTimer) return;
     const el = $('#priceClock'); const p2 = (n) => String(n).padStart(2, '0');
+    const now = () => new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
+    // Phần ngày vẽ một lần; chỉ phần giờ (ô cố định chiều rộng) thay đổi mỗi giây -> không giật
+    let curDay = '';
     const tick = () => {
-      const t = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
-      el.innerHTML = `Ngày ${p2(t.getDate())} Tháng ${p2(t.getMonth() + 1)} Năm ${t.getFullYear()} <span class="sep">|</span> ${p2(t.getHours())} : ${p2(t.getMinutes())} : ${p2(t.getSeconds())}`;
+      const t = now(); const day = `Ngày ${p2(t.getDate())} Tháng ${p2(t.getMonth() + 1)} Năm ${t.getFullYear()}`;
+      if (day !== curDay) { curDay = day; el.innerHTML = `<span class="d">${day}</span><span class="sep">|</span><span class="t"></span>`; }
+      $('.t', el).textContent = `${p2(t.getHours())} : ${p2(t.getMinutes())} : ${p2(t.getSeconds())}`;
     };
     tick(); clockTimer = setInterval(tick, 1000);
   }
