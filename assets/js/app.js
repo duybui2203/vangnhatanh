@@ -59,6 +59,7 @@
     $('#footerPhone').textContent = fmtPhone(s.phone);
     $('#footerZaloTxt').textContent = `Zalo: ${fmtPhone(s.zalo || s.phone)}`;
     $('#footerHours').textContent = s.hours || '';
+    const em = $('#footerEmail'); if (s.email) { em.textContent = s.email; em.href = `mailto:${s.email}`; em.closest('li').hidden = false; } else em.closest('li').hidden = true;
     $('#copyright').textContent = `© ${new Date().getFullYear()} ${s.company}. Giá tham khảo, có thể thay đổi theo thị trường.`;
     $('#footerSlogans').innerHTML = (s.slogans || []).map((x) => `<li>${esc(x)}</li>`).join('');
     // slogan xoay vòng ở header
@@ -149,31 +150,19 @@
     const d = today - yest; if (d === 0) return `<span class="delta flat">▬</span>`;
     return `<span class="delta ${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'}${fmtK(Math.abs(d))}</span>`;
   }
-  async function renderPrices() {
-    const s = state.settings;
-    let latest = null, yest = null;
-    try { latest = await loadJSON('data/prices/latest.json', { bust: Date.now(), live: true }); } catch { latest = null; }
-    if (latest?.date) {
-      for (let i = 1; i <= 4 && !yest; i++) { try { yest = await loadJSON(`data/prices/history/${shiftDate(latest.date, -i)}.json`, { optional: true, live: true }); } catch { yest = null; } }
-    }
-    const ymap = Object.fromEntries((yest?.rows || []).map((r) => [r.id, r]));
-    const own = s.ownPrice || {};
-    const rows = [];
-    rows.push(`<tr class="own"><td><span class="name">${esc(own.name || 'Vàng Nhật Anh')}</span><span class="src">Giá tại cửa hàng</span></td>
-      <td>${fmtK(own.buy)}${delta(own.buy, own.prevBuy)}</td><td>${fmtK(own.sell)}${delta(own.sell, own.prevSell)}</td>
-      <td class="y">${fmtK(own.prevBuy)}</td><td class="y">${fmtK(own.prevSell)}</td></tr>`);
-    for (const r of latest?.rows || []) {
-      const y = ymap[r.id] || (r.prevBuy || r.prevSell ? { buy: r.prevBuy, sell: r.prevSell } : null);
-      rows.push(`<tr class="${r.stale ? 'stale' : ''}"><td><span class="name">${esc(r.name)}</span>${r.stale && r.time ? `<span class="src">Cập nhật ${fmtTime(r.time)}</span>` : ''}</td>
-        <td>${fmtK(r.buy)}${delta(r.buy, y?.buy)}</td><td>${fmtK(r.sell)}${delta(r.sell, y?.sell)}</td>
-        <td class="y">${fmtK(y?.buy)}</td><td class="y">${fmtK(y?.sell)}</td></tr>`);
-    }
-    $('#priceBody').innerHTML = rows.join('');
-    $('#priceUpdated').textContent = latest ? `Cập nhật lúc ${fmtTime(latest.updatedAt)}` : 'Chưa có dữ liệu giá thị trường';
-    $('#priceDate').textContent = latest?.date ? `Hôm nay ${dmy(latest.date)}` : '';
-    $('#thToday').textContent = latest?.date ? `Hôm nay (${dmy(latest.date)})` : 'Hôm nay';
-    const yd = yest?.date || latest?.prevDate;
-    $('#thYesterday').textContent = yd ? `Hôm qua (${dmy(yd)})` : 'Hôm qua';
+  // Bảng giá nhập tay trong admin (settings.prices): mỗi dòng có giá hôm nay + hôm qua, mũi tên so sánh
+  function renderPrices() {
+    const p = state.settings?.prices || {};
+    const rows = (p.rows || []).map((r) => `
+      <tr class="${r.own ? 'own' : ''}"><td><span class="name">${esc(r.name)}</span>${r.note ? `<span class="src">${esc(r.note)}</span>` : ''}</td>
+        <td>${fmtK(r.buy)}${delta(r.buy, r.prevBuy)}</td><td>${fmtK(r.sell)}${delta(r.sell, r.prevSell)}</td>
+        <td class="y">${fmtK(r.prevBuy)}</td><td class="y">${fmtK(r.prevSell)}</td></tr>`);
+    $('#priceBody').innerHTML = rows.join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Chưa có bảng giá</td></tr>';
+    $('#priceUpdated').textContent = p.updatedAt ? `Cập nhật lúc ${fmtTime(p.updatedAt)}` : '';
+    $('#priceDate').textContent = p.date ? `Hôm nay ${dmy(p.date)}` : '';
+    $('#thToday').textContent = p.date ? `Hôm nay (${dmy(p.date)})` : 'Hôm nay';
+    $('#thYesterday').textContent = p.prevDate ? `Hôm qua (${dmy(p.prevDate)})` : 'Hôm qua';
+    $('#priceUnit').textContent = `Đơn vị: ${p.unit || 'nghìn đồng/chỉ'}`;
   }
 
   // ---------- Đăng nhập (xem auth.js) ----------
@@ -228,7 +217,6 @@
       renderSettings(settings);
       renderCategories(categories);
       renderPrices();
-      setInterval(renderPrices, C.pricesRefreshMs);
       setInterval(checkForUpdates, C.dataRefreshMs || 120000);
       document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForUpdates(); });
     } catch (err) {

@@ -8,7 +8,7 @@
   <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml" />
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../assets/css/style.css?v=4" />
-  <link rel="stylesheet" href="../assets/css/admin.css?v=5" />
+  <link rel="stylesheet" href="../assets/css/admin.css?v=7" />
 </head>
 <body>
   <!-- Cổng đăng nhập -->
@@ -40,7 +40,7 @@
       <div class="tabs" id="tabs">
         <button class="tab active" data-tab="cats">Danh mục</button>
         <button class="tab" data-tab="prods">Sản phẩm</button>
-        <button class="tab" data-tab="price">Giá Vàng Nhật Anh</button>
+        <button class="tab" data-tab="price">Bảng giá vàng</button>
         <button class="tab" data-tab="info">Thông tin chung</button>
         <button class="tab" data-tab="token" id="tabToken">Kết nối GitHub</button>
       </div>
@@ -93,19 +93,20 @@
       <!-- ===== Giá vàng ===== -->
       <section class="panel" id="panel-price">
         <div class="box">
-          <h3>Giá Vàng Nhật Anh (nghìn đồng/lượng)</h3>
-          <p class="help">Ví dụ 147.000 nghìn đồng/lượng = 147.000.000 ₫/lượng. Khi lưu sang ngày mới, giá cũ tự chuyển sang cột “Hôm qua”. Các dòng còn lại trong bảng (SJC, DOJI, BTMC…) được bot tự cập nhật mỗi 15 phút.</p>
-          <div class="row">
-            <div class="field"><label>Giá mua hôm nay</label><input id="ownBuy" type="number" inputmode="numeric" /></div>
-            <div class="field"><label>Giá bán hôm nay</label><input id="ownSell" type="number" inputmode="numeric" /></div>
+          <div class="row" style="margin-bottom:6px"><h3 style="margin:0">Bảng giá vàng</h3><button class="btn btn-ghost btn-sm fix" id="addPriceRow">+ Thêm loại vàng</button></div>
+          <p class="help">Nhập tay toàn bộ. Ví dụ <b>14560</b> sẽ hiển thị là <b>14.560</b>. Web tự vẽ mũi tên tăng/giảm bằng cách so giá hôm nay với hôm qua.
+            Khi bạn lưu vào <b>ngày mới</b>, giá hôm nay hiện tại tự chuyển sang cột hôm qua, bạn chỉ cần nhập giá mới. Tích <b>Tại tiệm</b> để tô vàng dòng đó.</p>
+          <div class="row" style="margin-bottom:8px">
+            <div class="field" style="margin:0"><label>Đơn vị hiển thị</label><input id="priceUnit" type="text" placeholder="nghìn đồng/chỉ" /></div>
+            <div class="field fix" style="margin:0"><label>Ngày hôm nay</label><input id="priceDate" type="date" /></div>
+            <div class="field fix" style="margin:0"><label>Ngày hôm qua</label><input id="pricePrevDate" type="date" /></div>
           </div>
+          <div class="price-edit" id="priceRows"></div>
+          <p class="help" id="priceUpdated" style="margin-top:8px"></p>
           <div class="row">
-            <div class="field"><label>Giá mua hôm qua</label><input id="ownPrevBuy" type="number" inputmode="numeric" /></div>
-            <div class="field"><label>Giá bán hôm qua</label><input id="ownPrevSell" type="number" inputmode="numeric" /></div>
+            <button class="btn btn-gold fix" id="savePrice">Lưu bảng giá</button>
+            <button class="btn btn-ghost fix" id="rollPrice" title="Chuyển toàn bộ giá hôm nay sang cột hôm qua">Chuyển hôm nay → hôm qua</button>
           </div>
-          <div class="field"><label>Tên hiển thị</label><input id="ownName" type="text" /></div>
-          <p class="help" id="ownUpdated"></p>
-          <button class="btn btn-gold" id="savePrice">Lưu giá</button>
         </div>
       </section>
 
@@ -122,6 +123,7 @@
             <div class="field"><label>Số điện thoại</label><input id="sPhone" type="tel" /></div>
             <div class="field"><label>Số Zalo</label><input id="sZalo" type="tel" /></div>
           </div>
+          <div class="field"><label>Email</label><input id="sEmail" type="email" /></div>
           <div class="field"><label>Giờ mở cửa</label><input id="sHours" type="text" /></div>
         </div>
         <div class="box">
@@ -186,6 +188,6 @@
   <script src="../assets/js/config.js?v=7"></script>
   <script src="../assets/js/auth.js?v=7"></script>
   <script src="../assets/js/github.js?v=7"></script>
-  <script src="../assets/js/admin.js?v=10"></script>
+  <script src="../assets/js/admin.js?v=11"></script>
 </body>
 </html>

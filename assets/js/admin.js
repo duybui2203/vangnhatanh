@@ -289,22 +289,62 @@
     if (ok) loadProds();
   }
 
-  // ---------- Giá Vàng Nhật Anh ----------
+  // ---------- Bảng giá vàng (nhập tay) ----------
+  const shiftDay = (ymd, d) => { const [y, m, dd] = ymd.split('-').map(Number); return new Date(Date.UTC(y, m - 1, dd + d)).toISOString().slice(0, 10); };
   function renderPrice() {
-    const o = state.settings.ownPrice || {};
-    $('#ownBuy').value = o.buy ?? ''; $('#ownSell').value = o.sell ?? ''; $('#ownPrevBuy').value = o.prevBuy ?? ''; $('#ownPrevSell').value = o.prevSell ?? ''; $('#ownName').value = o.name || 'Vàng Nhật Anh';
-    $('#ownUpdated').textContent = o.updatedAt ? `Lần cập nhật cuối: ${new Date(o.updatedAt).toLocaleString('vi-VN')}` : '';
+    const p = state.settings.prices || { unit: 'nghìn đồng/chỉ', rows: [] };
+    $('#priceUnit').value = p.unit || ''; $('#priceDate').value = p.date || vnDate(); $('#pricePrevDate').value = p.prevDate || shiftDay(p.date || vnDate(), -1);
+    $('#priceUpdated').textContent = p.updatedAt ? `Lần lưu cuối: ${new Date(p.updatedAt).toLocaleString('vi-VN')}` : '';
+    renderPriceRows(p.rows || []);
   }
+  function renderPriceRows(rows) {
+    $('#priceRows').innerHTML = `
+      <div class="pr head"><span>Loại vàng</span><span>Mua hôm nay</span><span>Bán hôm nay</span><span>Mua hôm qua</span><span>Bán hôm qua</span><span>Tại tiệm</span><span></span></div>` +
+      rows.map((r, i) => `
+      <div class="pr" data-i="${i}">
+        <input class="pn" type="text" value="${esc(r.name)}" placeholder="Tên loại vàng" />
+        <input class="pb" type="number" inputmode="numeric" value="${r.buy ?? ''}" placeholder="Mua" />
+        <input class="ps" type="number" inputmode="numeric" value="${r.sell ?? ''}" placeholder="Bán" />
+        <input class="ppb y" type="number" inputmode="numeric" value="${r.prevBuy ?? ''}" placeholder="Mua" />
+        <input class="pps y" type="number" inputmode="numeric" value="${r.prevSell ?? ''}" placeholder="Bán" />
+        <label class="check" style="justify-content:center"><input class="po" type="checkbox" ${r.own ? 'checked' : ''} /></label>
+        <div class="acts">
+          <button type="button" class="act" data-prup="${i}" ${i === 0 ? 'disabled' : ''}>↑</button>
+          <button type="button" class="act" data-prdown="${i}" ${i === rows.length - 1 ? 'disabled' : ''}>↓</button>
+          <button type="button" class="act danger" data-prdel="${i}">Xóa</button>
+        </div>
+      </div>`).join('');
+    $$('[data-prup]').forEach((b) => b.onclick = () => { const r = readPriceRows(); const i = +b.dataset.prup; [r[i - 1], r[i]] = [r[i], r[i - 1]]; renderPriceRows(r); });
+    $$('[data-prdown]').forEach((b) => b.onclick = () => { const r = readPriceRows(); const i = +b.dataset.prdown; [r[i + 1], r[i]] = [r[i], r[i + 1]]; renderPriceRows(r); });
+    $$('[data-prdel]').forEach((b) => b.onclick = () => { const r = readPriceRows(); if (!confirm(`Xóa dòng “${r[+b.dataset.prdel].name}”?`)) return; r.splice(+b.dataset.prdel, 1); renderPriceRows(r); });
+  }
+  const numOrNull = (v) => { const n = Number(String(v).replace(/[^\d]/g, '')); return n > 0 ? n : null; };
+  function readPriceRows() {
+    return $$('#priceRows .pr[data-i]').map((row, i) => {
+      const old = (state.settings.prices?.rows || [])[i] || {};
+      return { id: old.id || slugify($('.pn', row).value) || `loai-${i + 1}`, name: $('.pn', row).value.trim(), note: old.note || ($('.po', row).checked ? 'Giá tại tiệm' : ''), own: $('.po', row).checked,
+        buy: numOrNull($('.pb', row).value), sell: numOrNull($('.ps', row).value), prevBuy: numOrNull($('.ppb', row).value), prevSell: numOrNull($('.pps', row).value) };
+    });
+  }
+  $('#addPriceRow').addEventListener('click', () => renderPriceRows([...readPriceRows(), { name: '', own: false, buy: null, sell: null, prevBuy: null, prevSell: null }]));
+  $('#rollPrice').addEventListener('click', () => {
+    if (!confirm('Chuyển toàn bộ giá HÔM NAY sang cột HÔM QUA? Sau đó bạn nhập giá mới cho hôm nay rồi bấm Lưu.')) return;
+    renderPriceRows(readPriceRows().map((r) => ({ ...r, prevBuy: r.buy, prevSell: r.sell })));
+    $('#pricePrevDate').value = $('#priceDate').value; $('#priceDate').value = vnDate();
+  });
   $('#savePrice').addEventListener('click', async () => {
-    const o = { ...(state.settings.ownPrice || {}) };
-    const nb = Number($('#ownBuy').value), ns = Number($('#ownSell').value);
-    if (!nb || !ns) return alert('Nhập đủ giá mua và giá bán.');
-    // Sang ngày mới: giá đang có trở thành "hôm qua" (trừ khi người dùng đã tự sửa ô hôm qua)
-    const lastDay = o.updatedAt ? vnDate(new Date(o.updatedAt)) : null;
-    let pb = Number($('#ownPrevBuy').value) || null, ps = Number($('#ownPrevSell').value) || null;
-    if (lastDay && lastDay !== vnDate() && pb === (o.prevBuy ?? null) && ps === (o.prevSell ?? null)) { pb = o.buy ?? pb; ps = o.sell ?? ps; }
-    state.settings.ownPrice = { name: $('#ownName').value.trim() || 'Vàng Nhật Anh', buy: nb, sell: ns, prevBuy: pb, prevSell: ps, updatedAt: new Date().toISOString() };
-    const ok = await run('Đang lưu giá…', () => GH.writeJSON('data/settings.json', state.settings, `Cập nhật giá Vàng Nhật Anh ${nb}/${ns}`));
+    let rows = readPriceRows().filter((r) => r.name);
+    if (!rows.length) return alert('Bảng giá cần ít nhất một dòng.');
+    const old = state.settings.prices || {};
+    let date = $('#priceDate').value || vnDate(), prevDate = $('#pricePrevDate').value || shiftDay(date, -1);
+    // Sang ngày mới mà người dùng chưa tự chuyển: giá hôm nay cũ -> hôm qua (chỉ áp cho dòng chưa sửa ô hôm qua)
+    if (old.date && old.date !== vnDate() && date === old.date) {
+      const oldMap = Object.fromEntries((old.rows || []).map((r) => [r.id, r]));
+      rows = rows.map((r) => { const o = oldMap[r.id]; return o && r.prevBuy === (o.prevBuy ?? null) && r.prevSell === (o.prevSell ?? null) ? { ...r, prevBuy: o.buy, prevSell: o.sell } : r; });
+      prevDate = old.date; date = vnDate();
+    }
+    state.settings.prices = { unit: $('#priceUnit').value.trim() || 'nghìn đồng/chỉ', date, prevDate, updatedAt: new Date().toISOString(), rows };
+    const ok = await run('Đang lưu bảng giá…', () => GH.writeJSON('data/settings.json', state.settings, 'Cập nhật bảng giá vàng'));
     if (ok) renderPrice();
   });
 
@@ -313,7 +353,7 @@
   function renderInfo() {
     const s = state.settings;
     $('#sCompany').value = s.company || ''; $('#sBrand').value = s.brand || ''; $('#sSlogans').value = (s.slogans || []).join('\n'); $('#sAddress').value = s.address || '';
-    $('#sMap').value = s.mapUrl || ''; $('#sPhone').value = s.phone || ''; $('#sZalo').value = s.zalo || ''; $('#sHours').value = s.hours || '';
+    $('#sMap').value = s.mapUrl || ''; $('#sPhone').value = s.phone || ''; $('#sZalo').value = s.zalo || ''; $('#sHours').value = s.hours || ''; $('#sEmail').value = s.email || '';
     renderCommitRows(s.commitments || []);
   }
   function renderCommitRows(list) {
@@ -330,7 +370,7 @@
   $('#saveInfo').addEventListener('click', async () => {
     const s = state.settings;
     s.company = $('#sCompany').value.trim(); s.brand = $('#sBrand').value.trim(); s.slogans = $('#sSlogans').value.split('\n').map((x) => x.trim()).filter(Boolean);
-    s.address = $('#sAddress').value.trim(); s.mapUrl = $('#sMap').value.trim(); s.phone = $('#sPhone').value.replace(/\D/g, ''); s.zalo = $('#sZalo').value.replace(/\D/g, ''); s.hours = $('#sHours').value.trim();
+    s.address = $('#sAddress').value.trim(); s.mapUrl = $('#sMap').value.trim(); s.phone = $('#sPhone').value.replace(/\D/g, ''); s.zalo = $('#sZalo').value.replace(/\D/g, ''); s.hours = $('#sHours').value.trim(); s.email = $('#sEmail').value.trim();
     s.commitments = readCommitRows();
     await run('Đang lưu thông tin…', () => GH.writeJSON('data/settings.json', s, 'Cập nhật thông tin chung'));
   });

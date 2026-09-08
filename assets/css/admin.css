@@ -63,5 +63,16 @@ body { background: var(--bg); }
 .modal-box.wide { max-width: 560px; max-height: 92vh; overflow-y: auto; }
 .gate { min-height: 70vh; display: grid; place-items: center; padding: 20px; }
 .commit-row { display: grid; grid-template-columns: 110px 1fr auto; gap: 8px; align-items: start; margin-bottom: 8px; }
+/* Bảng giá nhập tay */
+.price-edit { overflow-x: auto; }
+.pr { display: grid; grid-template-columns: minmax(150px, 1.6fr) repeat(4, minmax(92px, 1fr)) 64px 124px; gap: 6px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line-soft); min-width: 780px; }
+.pr.head span { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; text-align: center; }
+.pr.head span:first-child { text-align: left; }
+.pr input[type="text"], .pr input[type="number"] { height: 40px; border-radius: 10px; border: 1px solid var(--line); background: #fff; color: var(--text); padding: 0 10px; font-size: 14px; width: 100%; outline: none; text-align: right; font-variant-numeric: tabular-nums; }
+.pr input[type="text"] { text-align: left; font-weight: 600; }
+.pr input.y { background: #fbf8ef; color: var(--muted); }
+.pr input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,162,39,0.18); }
+.pr .acts { gap: 4px; }
+.pr .act { height: 34px; padding: 0 9px; }
 .commit-row .field { margin: 0; }
 @media (max-width: 560px) { .commit-row { grid-template-columns: 1fr; } }
