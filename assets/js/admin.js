@@ -293,7 +293,7 @@
   const shiftDay = (ymd, d) => { const [y, m, dd] = ymd.split('-').map(Number); return new Date(Date.UTC(y, m - 1, dd + d)).toISOString().slice(0, 10); };
   function renderPrice() {
     const p = state.settings.prices || { unit: 'nghìn đồng/chỉ', rows: [] };
-    $('#priceUnit').value = p.unit || ''; $('#priceDate').value = p.date || vnDate(); $('#pricePrevDate').value = p.prevDate || shiftDay(p.date || vnDate(), -1);
+    $('#priceTitle').value = p.title || 'VÀNG BẠC NHẬT ANH'; $('#priceUnit').value = p.unit || ''; $('#priceDate').value = p.date || vnDate(); $('#pricePrevDate').value = p.prevDate || shiftDay(p.date || vnDate(), -1);
     $('#priceUpdated').textContent = p.updatedAt ? `Lần lưu cuối: ${new Date(p.updatedAt).toLocaleString('vi-VN')}` : '';
     renderPriceRows(p.rows || []);
   }
@@ -343,7 +343,7 @@
       rows = rows.map((r) => { const o = oldMap[r.id]; return o && r.prevBuy === (o.prevBuy ?? null) && r.prevSell === (o.prevSell ?? null) ? { ...r, prevBuy: o.buy, prevSell: o.sell } : r; });
       prevDate = old.date; date = vnDate();
     }
-    state.settings.prices = { unit: $('#priceUnit').value.trim() || 'nghìn đồng/chỉ', date, prevDate, updatedAt: new Date().toISOString(), rows };
+    state.settings.prices = { title: $('#priceTitle').value.trim() || 'VÀNG BẠC NHẬT ANH', unit: $('#priceUnit').value.trim() || 'nghìn đồng/chỉ', date, prevDate, updatedAt: new Date().toISOString(), rows };
     const ok = await run('Đang lưu bảng giá…', () => GH.writeJSON('data/settings.json', state.settings, 'Cập nhật bảng giá vàng'));
     if (ok) renderPrice();
   });

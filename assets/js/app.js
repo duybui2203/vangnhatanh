@@ -159,10 +159,22 @@
         <td class="y">${fmtK(r.prevBuy)}</td><td class="y">${fmtK(r.prevSell)}</td></tr>`);
     $('#priceBody').innerHTML = rows.join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted)">Chưa có bảng giá</td></tr>';
     $('#priceUpdated').textContent = p.updatedAt ? `Cập nhật lúc ${fmtTime(p.updatedAt)}` : '';
-    $('#priceDate').textContent = p.date ? `Hôm nay ${dmy(p.date)}` : '';
     $('#thToday').textContent = p.date ? `Hôm nay (${dmy(p.date)})` : 'Hôm nay';
     $('#thYesterday').textContent = p.prevDate ? `Hôm qua (${dmy(p.prevDate)})` : 'Hôm qua';
     $('#priceUnit').textContent = `Đơn vị: ${p.unit || 'nghìn đồng/chỉ'}`;
+    $('#priceTitle').textContent = p.title || 'VÀNG BẠC NHẬT ANH';
+    startClock();
+  }
+  // Dòng "Ngày 03 Tháng 09 Năm 2026 | 12 : 11 : 57" chạy theo giờ Việt Nam
+  let clockTimer = null;
+  function startClock() {
+    if (clockTimer) return;
+    const el = $('#priceClock'); const p2 = (n) => String(n).padStart(2, '0');
+    const tick = () => {
+      const t = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
+      el.innerHTML = `Ngày ${p2(t.getDate())} Tháng ${p2(t.getMonth() + 1)} Năm ${t.getFullYear()} <span class="sep">|</span> ${p2(t.getHours())} : ${p2(t.getMinutes())} : ${p2(t.getSeconds())}`;
+    };
+    tick(); clockTimer = setInterval(tick, 1000);
   }
 
   // ---------- Đăng nhập (xem auth.js) ----------
