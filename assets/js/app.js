@@ -147,7 +147,7 @@
   function shiftDate(ymd, d) { const [y, m, dd] = ymd.split('-').map(Number); const t = new Date(Date.UTC(y, m - 1, dd + d)); return t.toISOString().slice(0, 10); }
   function delta(today, yest) {
     if (today == null || yest == null) return '';
-    const d = today - yest; if (d === 0) return `<span class="delta flat">▬</span>`;
+    const d = today - yest; if (d === 0) return ''; // không đổi thì không hiện ký hiệu
     return `<span class="delta ${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'}${fmtK(Math.abs(d))}</span>`;
   }
   // Bảng giá nhập tay trong admin (settings.prices): mỗi dòng có giá hôm nay + hôm qua, mũi tên so sánh
